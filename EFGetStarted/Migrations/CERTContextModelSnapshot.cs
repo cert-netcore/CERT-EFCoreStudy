@@ -29,7 +29,39 @@ namespace EFGetStarted.Migrations
 
                     b.HasKey("StudentId");
 
-                    b.ToTable("students");
+                    b.ToTable("CERT_Student","11nstz");
+                });
+
+            modelBuilder.Entity("EFGetStarted.CERT_course", b =>
+                {
+                    b.Property<int>("number")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Friday")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Monday")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Saturday")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Sunday")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Thursday")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Tuestday")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Wednesday")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("number");
+
+                    b.ToTable("CERT_course","11nstz");
                 });
 
             modelBuilder.Entity("EFGetStarted.CERT_teacher", b =>
@@ -42,11 +74,12 @@ namespace EFGetStarted.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("TeacherId");
 
-                    b.ToTable("teachers");
+                    b.ToTable("CERT_teacher","11nstz");
                 });
 #pragma warning restore 612, 618
         }
