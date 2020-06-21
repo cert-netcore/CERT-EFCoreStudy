@@ -8,9 +8,12 @@ namespace EFGetStarted
     {
         public DbSet<CERT_Student> students { get; set; }
         public DbSet<CERT_teacher> teachers { get; set; }
-        public DbSet<CERT_course> courses{get;set;}
-        protected override void OnConfiguring(DbContextOptionsBuilder options)
-            => options.UseSqlite("Data Source=CERT.db");
+        public DbSet<CERT_course> courses { get; set; }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=Blogging;Trusted_Connection=True;");
+        }
+
     }
     [Table("CERT_Student", Schema = "11nstz")]
     public class CERT_Student
@@ -34,15 +37,30 @@ namespace EFGetStarted
     [Table("CERT_course", Schema = "11nstz")]
     public class CERT_course
     {
+
+        [Required, Key]
         
-        [Required,Key]
-        public int number {get;set;}//标注在第几节课
-        public string Monday {get;set;}
-        public string Tuestday{get;set;}
-        public string Wednesday{get;set;}
-        public string Thursday{get;set;}
-        public string Friday{get;set;}
-        public string Saturday{get;set;}
-        public string Sunday{get;set;}
+        public string courseday
+        {
+            get { return courseday; }
+            set
+            {
+                courseday = day.GetName(typeof(day), value);
+            }
+
+        }//第几天
+        public int coursenumber { get; set; }//标注在第几节课
+        public string coursename { get; set; }
+        public enum day
+        {
+            Monday = 1,
+            Tuestday,
+            Wednesday,
+            Thursday,
+            Friday,
+            Saturday,
+            Sunday,
+        }
+
     }
 }
