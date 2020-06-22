@@ -11,19 +11,22 @@ namespace EFGetStarted
         public DbSet<CERT_course> courses { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<CERT_Student>().HasKey(c => new { c.StudentId });//设置student主键
+            modelBuilder.Entity<CERT_Student>().HasKey(c => c.StudentId);//设置student主键
             modelBuilder.Entity<CERT_Student>().Property(t => t.Name).HasColumnType("varchar(25)").IsRequired();//设置name类型
             modelBuilder.Entity<CERT_Student>().Property(teachers => teachers.Sex).HasColumnType("varchar(25)").IsRequired();//设置性别类型
 
-            modelBuilder.Entity<CERT_teacher>().HasKey(c => new { c.TeacherId });//设置teacher主键
+            modelBuilder.Entity<CERT_teacher>().HasKey(c => c.TeacherId);//设置teacher主键
             modelBuilder.Entity<CERT_teacher>().Property(t => t.Name).HasColumnType("varchar(25)").IsRequired();
             modelBuilder.Entity<CERT_teacher>().Property(t => t.Age).HasColumnType("vinyint").IsRequired();
             modelBuilder.Entity<CERT_teacher>().Property(t => t.Sex).HasColumnType("varchar(25)").IsRequired();
 
-            modelBuilder.Entity<CERT_course>().HasKey(c => new { c.ID });
-            modelBuilder.Entity<CERT_course>().Property(t=>t.courseday).HasColumnType("varchar(25)").IsRequired();
-            modelBuilder.Entity<CERT_course>().Property(t=>t.coursename).HasColumnType("varchar(25)").IsRequired();
-            modelBuilder.Entity<CERT_course>().Property(t=>t.coursepoint).HasColumnType("vinyint").IsRequired();
+            modelBuilder.Entity<CERT_course>().HasKey(c => c.id );
+            modelBuilder.Entity<CERT_course>().Property(t => t.courseday).HasColumnType("varchar(25)").IsRequired();
+            modelBuilder.Entity<CERT_course>().Property(t => t.coursename).HasColumnType("varchar(25)").IsRequired();
+            modelBuilder.Entity<CERT_course>().Property(t => t.coursepoint).HasColumnType("vinyint").IsRequired();
+
+            modelBuilder.Entity<CERT_courselist>().HasKey(p=>p.courseid);
+            modelBuilder.Entity<CERT_courselist>().HasOne<CERT_course>().WithOne().HasForeignKey<CERT_course>(d => d.id);//设置外键
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -34,10 +37,10 @@ namespace EFGetStarted
     [Table("CERT_Student", Schema = "11nstz")]
     public class CERT_Student
     {
-
         public int StudentId { get; set; }
         public string Name { get; set; }
         public string Sex { get; set; }
+        public CERT_courselist courselist{get;set;}
     }
     [Table("CERT_teacher", Schema = "11nstz")]
     public class CERT_teacher
@@ -46,13 +49,22 @@ namespace EFGetStarted
         public string Name { get; set; }
         public int Age { get; set; }
         public string Sex { get; set; }
+        public CERT_courselist courselist
+        { set;get;}
     }
-    [Table("CERT_course", Schema = "11nstz")]
-    public class CERT_course
+    [Table("CERT_courselist", Schema = "11nstz")]
+    public class CERT_courselist//个人课程表
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int ID { get; set; }//标记数量
-        public string courseday
+        public int courseid {get;set;}//课程标号
+        public string coursename { get;set;}//课程名
+        public string courseday { get;set;}//星期几
+        public int coursepoint { get;set;}//第几节
+    }
+[Table("CERT_course", Schema = "11nstz")]
+    public class CERT_course//课程库
+    {
+        public int id { get; set; }
+        public string courseday//星期几
         {
             get { return courseday; }
             set
@@ -60,9 +72,9 @@ namespace EFGetStarted
                 courseday = day.GetName(typeof(day), value);
             }
 
-        }//第几天
-        public int coursepoint { get; set; }//标注在第几节课
-        public string coursename { get; set; }
+        }
+        public int coursepoint { get; set; }//第几节
+        public string coursename { get; set; }//课程名
         public enum day
         {
             Monday = 1,
