@@ -27,6 +27,8 @@ namespace EFGetStarted
 
             modelBuilder.Entity<CERT_courselist>().HasKey(p=>p.courseid);
             modelBuilder.Entity<CERT_courselist>().HasOne<CERT_course>().WithOne().HasForeignKey<CERT_course>(d => d.id);//设置外键
+
+            modelBuilder.Entity<CERT_studentlist>().HasOne<CERT_Student>().WithOne().HasForeignKey<CERT_Student>(d=>d.StudentId);
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -60,7 +62,7 @@ namespace EFGetStarted
         public string courseday { get;set;}//星期几
         public int coursepoint { get;set;}//第几节
     }
-[Table("CERT_course", Schema = "11nstz")]
+    [Table("CERT_course", Schema = "11nstz")]
     public class CERT_course//课程库
     {
         public int id { get; set; }
@@ -75,6 +77,8 @@ namespace EFGetStarted
         }
         public int coursepoint { get; set; }//第几节
         public string coursename { get; set; }//课程名
+        public int TeacherId{get;set;}
+        public CERT_studentlist studentlist{get;set;}
         public enum day
         {
             Monday = 1,
@@ -85,6 +89,12 @@ namespace EFGetStarted
             Saturday,
             Sunday,
         }
-
+    }
+    [Table("CERT_course_studentlist",Schema="11nstz")]
+    public class CERT_studentlist
+    {
+        public int Id{get;set;}
+        public string studentname{get;set;}
+        public string sex{get;set;}
     }
 }
