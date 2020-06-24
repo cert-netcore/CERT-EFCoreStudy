@@ -4,14 +4,16 @@ using EFGetStarted;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace EFGetStarted.Migrations
 {
     [DbContext(typeof(CERTContext))]
-    partial class CERTContextModelSnapshot : ModelSnapshot
+    [Migration("20200624091802_CERT")]
+    partial class CERT
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

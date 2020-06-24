@@ -9,6 +9,8 @@ namespace EFGetStarted
         public DbSet<CERT_Student> students { get; set; }
         public DbSet<CERT_teacher> teachers { get; set; }
         public DbSet<CERT_course> courses { get; set; }
+        public DbSet<CERT_courselist> courselists{get;set;}
+        public DbSet<CERT_studentlist> studentlists{get;set;}
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<CERT_Student>(
