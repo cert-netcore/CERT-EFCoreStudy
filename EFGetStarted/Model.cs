@@ -11,22 +11,36 @@ namespace EFGetStarted
         public DbSet<CERT_course> courses { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<CERT_Student>().HasKey(c => c.StudentId);//设置student主键
-            modelBuilder.Entity<CERT_Student>().Property(t => t.Name).HasColumnType("varchar(25)").IsRequired();//设置name类型
-            modelBuilder.Entity<CERT_Student>().Property(teachers => teachers.Sex).HasColumnType("varchar(25)").IsRequired();//设置性别类型
+            modelBuilder.Entity<CERT_Student>(
+            eb =>   {
+                eb.HasKey(c => c.StudentId);//设置student主键
+                eb.Property(t => t.Name).HasColumnType("varchar(25)").IsRequired();//设置name类型
+                eb.Property(teachers => teachers.Sex).HasColumnType("varchar(25)").IsRequired();//设置性别类型
+                    });
+                    
+            modelBuilder.Entity<CERT_teacher>(
+            eb =>   {
+                    eb.HasKey(c => c.TeacherId);//设置teacher主键
+                    eb.Property(t => t.Name).HasColumnType("varchar(25)").IsRequired();
+                    eb.Property(t => t.Sex).HasColumnType("varchar(25)").IsRequired();
+                    });
 
-            modelBuilder.Entity<CERT_teacher>().HasKey(c => c.TeacherId);//设置teacher主键
-            modelBuilder.Entity<CERT_teacher>().Property(t => t.Name).HasColumnType("varchar(25)").IsRequired();
-            modelBuilder.Entity<CERT_teacher>().Property(t => t.Age).HasColumnType("vinyint").IsRequired();
-            modelBuilder.Entity<CERT_teacher>().Property(t => t.Sex).HasColumnType("varchar(25)").IsRequired();
+            modelBuilder.Entity<CERT_course>(
+            eb =>   {
+                    eb.Property(t => t.courseday).HasColumnType("varchar(25)").IsRequired();
+                    eb.Property(t => t.coursename).HasColumnType("varchar(25)").IsRequired();
+                    eb.Property(t => t.coursepoint).HasColumnType("vinyint").IsRequired();
+                    eb.HasIndex(p => new {p.courseday,p.coursename,p.coursepoint}).IsUnique();//使这几个列不能完全重复
+                    });
 
-            modelBuilder.Entity<CERT_course>().HasKey(c => c.id );
-            modelBuilder.Entity<CERT_course>().Property(t => t.courseday).HasColumnType("varchar(25)").IsRequired();
-            modelBuilder.Entity<CERT_course>().Property(t => t.coursename).HasColumnType("varchar(25)").IsRequired();
-            modelBuilder.Entity<CERT_course>().Property(t => t.coursepoint).HasColumnType("vinyint").IsRequired();
-
-            modelBuilder.Entity<CERT_courselist>().HasKey(p=>p.courseid);
-            modelBuilder.Entity<CERT_courselist>().HasOne<CERT_course>().WithOne().HasForeignKey<CERT_course>(d => d.id);//设置外键
+            modelBuilder.Entity<CERT_courselist>(
+            eb =>   {
+                    eb.HasKey(p=>p.courseid);
+                    eb.HasOne<CERT_course>().WithOne().HasForeignKey<CERT_courselist>(p => p.courseid);//设置外键
+                    eb.HasOne<CERT_courselist>().WithMany().HasForeignKey(d =>d.courseid);
+                    eb.HasIndex(p => new {p.courseday,p.coursename,p.coursepoint}).IsUnique();
+            });
+            
 
             modelBuilder.Entity<CERT_studentlist>().HasOne<CERT_Student>().WithOne().HasForeignKey<CERT_Student>(d=>d.StudentId);
         }
@@ -49,10 +63,8 @@ namespace EFGetStarted
     {
         public int TeacherId { get; set; }
         public string Name { get; set; }
-        public int Age { get; set; }
         public string Sex { get; set; }
-        public CERT_courselist courselist
-        { set;get;}
+        public CERT_courselist courselist{set;get;}
     }
     [Table("CERT_courselist", Schema = "11nstz")]
     public class CERT_courselist//个人课程表
@@ -61,11 +73,13 @@ namespace EFGetStarted
         public string coursename { get;set;}//课程名
         public string courseday { get;set;}//星期几
         public int coursepoint { get;set;}//第几节
+        public int TeacherId{get;set;}
+        public List<int> StudentIdList {get;set;}
     }
     [Table("CERT_course", Schema = "11nstz")]
     public class CERT_course//课程库
     {
-        public int id { get; set; }
+        public int Id { get; set; }
         public string courseday//星期几
         {
             get { return courseday; }
@@ -91,7 +105,7 @@ namespace EFGetStarted
         }
     }
     [Table("CERT_course_studentlist",Schema="11nstz")]
-    public class CERT_studentlist
+    public class CERT_studentlist//课程学生列表
     {
         public int Id{get;set;}
         public string studentname{get;set;}
